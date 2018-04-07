@@ -8,9 +8,10 @@
     <path class="path4" d="M9.599 25.594c-1.769 0-3.203 1.434-3.203 3.203s1.434 3.203 3.203 3.203c1.769 0 3.203-1.434 3.203-3.203s-1.434-3.203-3.203-3.203zM9.599 30.717c-1.060 0-1.92-0.86-1.92-1.92s0.86-1.92 1.92-1.92c1.060 0 1.92 0.86 1.92 1.92s-0.86 1.92-1.92 1.92z"></path>
   </symbol>
   <div class="navbar">
-    <div class="navbar-left-container">
+    <div class="navbar-left-container" style="margin-left:20px;margin-top:5px;">
       <a href="/">
-        <img class="navbar-brand-logo" src="./../../static/logo.png"></a>
+        <img class="navbar-brand-logo" src="//s01.mifile.cn/i/logo-footer.png?v2">
+      </a>
     </div>
     <div class="navbar-right-container" style="display: flex;">
       <div class="navbar-menu-container">

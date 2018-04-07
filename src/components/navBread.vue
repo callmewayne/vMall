@@ -34,11 +34,11 @@
           <ul>
             <li v-for="(item,index) in goodslist" v-bind:key="index" >
               <div class="pic">
-                <a href="#"><img  v-lazy="'/static/'+item.img" alt=""></a>
+                <a href="#"><img  v-lazy="'/static/'+item.productImage" alt=""></a>
               </div>
               <div class="main">
-                <div class="name">{{item.name}}</div>
-                <div class="price">{{item.price}}</div>
+                <div class="name">{{item.productName}}</div>
+                <div class="price">{{item.salePrice}}</div>
                 <div class="btn-area">
                   <a href="javascript:;" class="btn btn--m">加入购物车</a>
                 </div>
@@ -80,32 +80,12 @@
 }
 </style>
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
       msg: "hello vue",
-      goodslist: [
-        {
-          name: "小爱同学",
-          price: 199,
-          img: "1.jpg"
-        },
-        {
-          name: "小米6",
-          price: 1199,
-          img: "2.jpg"
-        },
-        {
-          name: "电视",
-          price: 2999,
-          img: "3.jpg"
-        },
-        {
-          name: "空调",
-          price: 4999,
-          img: "4.jpg"
-        }
-      ],
+      goodslist: [],
       priceFilter: [
         {
           startPrice: "0.00",
@@ -128,6 +108,19 @@ export default {
       filterBy: false,
       overLayFlag: false
     };
+  },
+  mounted() {
+    axios.get("/goods").then(res => {
+      console.log(res);
+      let resp = res.data;
+      if (resp.status == 200) {
+        console.log("成功");
+        console.log(resp);
+        this.goodslist = resp.body.list
+      } else {
+        console.log("失败");
+      }
+    });
   },
   methods: {
     selectPrice(index) {
