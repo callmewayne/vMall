@@ -73,56 +73,7 @@ router.get('/', (req, res, next) => {
     // res.send('hello,goods list');
 
 })
-//添加到购物车
-// router.post('/addCart', (req, res, next) => {
-//     var userId = '101'
-//     let productId = req.body.productId//如果是post要用body
-//     var User = require('../models/user')
 
-//     User.findOne({ userId: userId }, (err, userdoc) => {
-//         if (err) {
-//             res.json({
-//                 status: 201,
-//                 msg: err.message
-//             })
-//         } else {
-//             if (userdoc) {
-//                 Goods.findOne({ productId: productId }, (err1, goodsdoc) => {
-//                     if (err1) {
-//                         res.json({
-//                             status: 201,
-//                             msg: err1.message
-//                         })
-//                     } else {
-//                         res.json({
-//                             status: 201,
-//                             msg: goodsdoc
-//                         })
-//                         if (goodsdoc) {
-//                             goodsdoc.productNum = 1
-//                             goodsdoc.checked = 1
-//                             userdoc.cartList.push(goodsdoc)
-//                             userdoc.save((err2) => {
-//                                 if (err2) {
-//                                     res.json({
-//                                         status: 201,
-//                                         msg: err2.message
-//                                     })
-//                                 } else {
-//                                     res.json({
-//                                         status: 200,
-//                                         msg: '请求成功',
-//                                         result: 'suc'
-//                                     })
-//                                 }
-//                             })
-//                         }
-//                     }
-//                 })
-//             }
-//         }
-//     })
-// });
 //加入到购物车
 router.post("/addCart", function (req,res,next) {
     var userId = '101',productId = req.body.productId
@@ -131,8 +82,9 @@ router.post("/addCart", function (req,res,next) {
     User.findOne({userId:userId}, function (err,userDoc) {
       if(err){
           res.json({
-              status:"1",
-              msg:err.message
+            status:"201",
+            msg:err.message,
+            body:null
           })
       }else{
           console.log("userDoc:"+userDoc);
@@ -150,14 +102,19 @@ router.post("/addCart", function (req,res,next) {
                 console.log("userDocsave:"+doc2);
                 if(err2){
                   res.json({
-                    status:"1",
-                    msg:err2.message
+                    status:"201",
+                    msg:err2.message,
+                    body:null
                   })
                 }else{
+                    userDoc.cartList.forEach((item)=>{
+                        delete item._id
+                    })
+
                   res.json({
-                    status:'0',
+                    status:'200',
                     msg:'添加购物车成功',
-                    result: userDoc.cartList
+                    body: userDoc.cartList
                   })
                 }
               })
@@ -166,8 +123,9 @@ router.post("/addCart", function (req,res,next) {
                   console.log('GoodsFindOne:'+doc)
                 if(err1){
                   res.json({
-                    status:"1",
-                    msg:err1.message
+                    status:"201",
+                    msg:err1.message,
+                    body:null
                   })
                 }else{
                   if(doc){
@@ -178,21 +136,27 @@ router.post("/addCart", function (req,res,next) {
                         console.log('userDocOne:'+doc2)
                       if(err2){
                         res.json({
-                          status:"1",
-                          msg:err2.message
+                            status:"201",
+                            msg:err1.message,
+                            body:null
                         })
                       }else{
+                        
+                        userDoc.cartList.forEach((item)=>{
+                            delete item._id
+                        })
                         res.json({
-                          status:'0',
-                          msg:'添加购物车成功',
-                          result: userDoc.cartList
+                            status:'200',
+                            msg:'添加购物车成功',
+                            body: userDoc.cartList
                         })
                       }
                     })
                   }else{
                     res.json({
-                        status:"0",
-                        msg:'查无数据'
+                        status:"201",
+                    msg:'找不到此商品',
+                    body:null
                       })
                   }
                 }
