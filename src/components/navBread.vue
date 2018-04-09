@@ -40,7 +40,7 @@
                 <div class="name">{{item.productName}}</div>
                 <div class="price">{{item.salePrice}}</div>
                 <div class="btn-area">
-                  <a href="javascript:;" class="btn btn--m">加入购物车</a>
+                  <a href="javascript:;" class="btn btn--m" @click="addCart(item.productId)">加入购物车</a>
                 </div>
               </div>
             </li>
@@ -193,6 +193,38 @@ export default {
       this.getGoodsList();
       this.closePop();
     },
+    // addCart(productId) {
+    //   axios
+    //     .post("/goods/addCart", {
+    //       productId: productId
+    //     })
+    //     .then(res => {
+    //       console.log(res)
+    //       if(res.status ===200){
+    //         alert(res.msg)
+    //       }else{
+    //          alert(res.msg)
+    //       }
+    //     });
+    // },
+     addCart(productId){
+       console.log(productId)
+       let pid =  parseInt(productId)
+      console.log(pid)
+                axios.post("/goods/addCart",{
+                  productId:pid
+                }).then((res)=>{
+                    var res = res.data;
+                     console.log(res)
+                    if(res.status==0){
+                        // this.mdShowCart = true;
+                        // this.$store.commit("updateCartCount",1);
+                       
+                    }else{
+                        this.mdShow = true;
+                    }
+                });
+            },
     showFilter() {
       this.filterBy = true;
       this.overLayFlag = true;
