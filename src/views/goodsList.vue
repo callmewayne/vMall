@@ -4,6 +4,7 @@
         <nav-bread>
             <span>goods</span>
         </nav-bread>
+       
     <nav-footer></nav-footer>
   </div>
 </template>
@@ -14,6 +15,7 @@ import axios from "axios";
 import NavHeader from "@/components/header.vue";
 import NavFooter from "@/components/NavFooter.vue";
 import NavBread from "@/components/NavBread.vue";
+import Model from "@/components/Model.vue";
 export default {
   data() {
     return {
@@ -24,7 +26,8 @@ export default {
   components: {
     NavHeader,
     NavFooter,
-    NavBread
+    NavBread,
+    Model
   }
 };
 </script>

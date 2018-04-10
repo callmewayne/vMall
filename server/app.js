@@ -19,7 +19,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use((req,res,next)=>{
+   if(req.cookies.userId){
+next()
+   }else{
+      if(req.originalUrl == '/users/login' || req.originalUrl == '/users/logout'||req.path=='/goods/list'){
+        next()
+     }else{
+       res.json({
+         code:201,
+         msg:'当前未登录',
+         body:''
+       })
+     }
+   }
+})
  app.use('/', indexRouter);
 app.use('/goods', goodsRouter);
 app.use('/users', usersRouter);

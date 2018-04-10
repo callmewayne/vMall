@@ -13,7 +13,7 @@
     <div class="filter-nav">
       <span class="sortby">Sort by:</span>
       <a href="javascript:void(0)" class="default cur">Default</a>
-      <a href="javascript:void(0)" class="price" @click="sortGoods">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+      <a href="javascript:void(0)" class="price" @click="sortGoods">Price <svg class="icon icon-arrow-short" v-bind:class="{'short-up':!sortFlag,}"><use xlink:href="#icon-arrow-short"></use></svg></a>
       <a href="javascript:void(0)" class="filterby stopPop" @click="showFilter">Filter by</a>
     </div>
     <div class="accessory-result">
@@ -54,6 +54,29 @@
   </div>
 </div>
 <div class="md-overlay " v-show="overLayFlag" @click="closePop"></div>
+ <model v-bind:mdShow="mdShow" v-on:close='closeModel'>
+          <p slot="message">
+            请先登录，不然无法加入到购物车
+          </p>
+          <div slot="btnGroup">
+            <a class="btn btn--m" @click="mdShow = false">关闭</a>
+          </div>
+        </model>
+         <model v-bind:mdShow="mdShowCart" v-on:close='closeModel'>
+          <p slot="message">
+           <svg class="icon-status-ok">
+                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-status-ok"></use>
+                    </svg>
+                      <span>加入购物车成功！</span>
+          </p>
+        
+          <div slot="btnGroup">
+            <a class="btn btn--m" @click="mdShowCart = false">去购物</a>
+            <router-link class="btn btn--m" to="/cart" >
+              查看购物车
+            </router-link>
+          </div>
+        </model>
   </div>
 </template>
 <style>
@@ -93,13 +116,31 @@
   line-height: 100px;
   text-align: center;
 }
+.icon-arrow-short {
+  width: 11px;
+  height: 11px;
+  transition: all 0.3s ease-out;
+}
+.short-up {
+  transform: rotate(180deg);
+  transition: all 0.3s ease-out;
+}
+/* .btn:hover{
+  background-color: 
+} */
 </style>
 <script>
 import axios from "axios";
+import Model from "@/components/Model.vue";
 export default {
+  components: {
+    Model
+  },
   data() {
     return {
       msg: "hello vue",
+      mdShow: false,
+      mdShowCart:false,
       sortFlag: true,
       page: 1,
       pageSize: 4,
@@ -143,7 +184,7 @@ export default {
       };
       this.loading = true;
       axios
-        .get("/goods", {
+        .get("/goods/list", {
           params: param
         })
         .then(res => {
@@ -207,24 +248,26 @@ export default {
     //       }
     //     });
     // },
-     addCart(productId){
-       console.log(productId)
-       let pid =  parseInt(productId)
-      console.log(pid)
-                axios.post("/goods/addCart",{
-                  productId:pid
-                }).then((res)=>{
-                    var res = res.data;
-                     console.log(res)
-                    if(res.status==200){
-                        // this.mdShowCart = true;
-                        // this.$store.commit("updateCartCount",1);
-                        console.log(res.body)
-                    }else{
-                        this.mdShow = true;
-                    }
-                });
-            },
+    addCart(productId) {
+      console.log(productId);
+      let pid = parseInt(productId);
+      console.log(pid);
+      axios
+        .post("/goods/addCart", {
+          productId: pid
+        })
+        .then(res => {
+          var res = res.data;
+          console.log(res);
+          if (res.status == 200) {
+            this.mdShowCart = true;
+            // this.$store.commit("updateCartCount",1);
+            console.log(res.body);
+          } else {
+            this.mdShow = true;
+          }
+        });
+    },
     showFilter() {
       this.filterBy = true;
       this.overLayFlag = true;
@@ -232,6 +275,10 @@ export default {
     closePop() {
       this.filterBy = false;
       this.overLayFlag = false;
+    },
+    closeModel() {
+        this.mdShowCart = false;
+      this.mdShow = false;
     }
   }
 };
