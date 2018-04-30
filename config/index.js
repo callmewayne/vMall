@@ -19,6 +19,14 @@ module.exports = {
         target:'http://localhost:3000',
         changeOrigin:true,
       },
+      "/users/**":{
+        target:'http://localhost:3000',
+        changeOrigin:true,
+      },
+      "/cart/*":{
+        target:'http://localhost:3000',
+        changeOrigin:true,
+      },
     },
 
     // Various Dev Server settings
