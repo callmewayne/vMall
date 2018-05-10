@@ -182,13 +182,13 @@ router.post("/addressList",(req,res,next)=>{
       userDoc.save((err1,doc1)=>{
         if(err1){
           res.json({
-            code:"201",
+            code:201,
             msg:err1.message,
             body:null
           })
         }else{
           res.json({
-            code:'200',
+            code:200,
             msg:'添加购物车成功',
             body: userDoc.addressList
           })

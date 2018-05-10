@@ -77,7 +77,7 @@
                     <div class="addr-opration addr-default" v-if="item.isDefault">默认地址</div>
                   </li>
                   <li class="addr-new">
-                    <div class="add-new-inner">
+                    <div class="add-new-inner" @click="newAddress">
                       <i class="icon-add">
                         <svg class="icon icon-add"><use xlink:href="#icon-add"></use></svg>
                       </i>
@@ -116,9 +116,9 @@
               </div>
             </div>
             <div class="next-btn-wrap">
-             <div class="btn btn--red" @click="newAddress">
+             <!-- <div class="btn btn--red" @click="newAddress">
 测试
-             </div>
+             </div> -->
               <router-link class="btn btn--m btn--red" v-bind:to="{path:'orderConfirm',query:{'addressId':selectedAddrId}}">Next</router-link>
             </div>
           </div>
@@ -197,6 +197,9 @@ export default {
         .then(response => {
           let res = response.data;
           console.log(res);
+          if(res.code==200){
+             this.init()
+          }
         });
     },
     expand() {
