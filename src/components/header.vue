@@ -23,7 +23,7 @@
         <div class="navbar">
             <div class="navbar-left-container">
               <a href="/">
-                <img class="navbar-brand-logo" src="/static/logo.png">
+                <img class="navbar-brand-logo" width="50" height="50" src="/static/logo.png">
               </a>
             </div>
             <div class="navbar-right-container" style="display: flex;">
@@ -161,6 +161,9 @@ export default {
   },
   mounted(){
     this.checkLogin()
+  },
+  computed:{
+    //  ...mapState(['nickName','cartCount'])
   },
   methods: {
     login() {

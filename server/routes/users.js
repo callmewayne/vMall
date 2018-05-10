@@ -25,7 +25,7 @@ router.post('/login', function (req, res, next) {
         })
         res.cookie('userName', doc.userName, {
           path: '/',
-          maxAge: 1000 * 60 * 60
+          maxAge: 1000 * 60 * 60*60
         })
         // req.session.user = doc
         res.json({
@@ -168,6 +168,114 @@ router.post('/editCheckAll', (req, res, next) => {
         code: 200,
         msg: '编辑成功',
         body: ''
+      })
+    }
+  })
+})
+//添加地址
+router.post("/addressList",(req,res,next)=>{
+  var userId = req.cookies.userId,
+  addressList = req.body.addressList
+  User.findOne({userId:userId},(err,userDoc)=>{
+    if(userDoc){
+      userDoc.addressList.push(addressList)
+      userDoc.save((err1,doc1)=>{
+        if(err1){
+          res.json({
+            code:"201",
+            msg:err1.message,
+            body:null
+          })
+        }else{
+          res.json({
+            code:'200',
+            msg:'添加购物车成功',
+            body: userDoc.addressList
+          })
+        }
+      })
+    }
+  })
+})
+//查询用户地址接口
+router.get("/addressList",(req,res,next)=>{
+  var userId = req.cookies.userId;
+  User.findOne({userId:userId},(err,doc)=>{
+    if(err){
+      res.json({
+        code:201,
+        msg:err.message,
+        body:''
+      })
+    }else{
+      res.json({
+        code:200,
+        msg:'',
+        body:doc.addressList
+      })
+    }
+  })
+})
+
+//设为默认地址
+router.post('/setDefault',(req,res,next)=>{
+  var userId = req.cookies.userId,
+  addressId = req.body.addressId
+  User.findOne({userId:userId},(err,doc)=>{
+    if(err){
+      res.json({
+        code:201,
+        msg:err.message,
+        body:''
+      })
+    }else{
+      doc.addressList.forEach((item)=>{
+        if(item.addressId ==addressId){
+         item.isDefault = true
+        }else{
+          item.isDefault = false
+        }
+      })
+      doc.save((err2,doc2)=>{
+       if(err2){
+         res.json({
+           code:201,
+           msg:err2.message,
+           body:''
+         })
+       }else{
+         res.json({
+           code:200,
+           msg:'设置默认成功',
+           body:doc2.addressList
+         })
+       }
+      })
+    }
+  })
+})
+//删除地址
+router.post('/delAddress',(req,res,next)=>{
+  var userId = req.cookies.userId,
+  addressId = req.body.addressId
+  User.update({"userId":userId},{
+    $pull:{
+      'addressList':{
+        'addressId':addressId
+      }
+    }
+  },(err,doc)=>{
+    if(err){
+      res.json({
+        code:201,
+        msg:err.message,
+        body:''
+      })
+    }else{
+      res.json({
+        code:200,
+        msg:'删除成功',
+        body:''
       })
     }
   })
