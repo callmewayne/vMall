@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('./../models/users')
+require('./../util/util')
 /* GET users listing. */
 router.get('/', function (req, res, next) {
   res.send('respond with a resource');
@@ -21,11 +22,11 @@ router.post('/login', function (req, res, next) {
       if (doc) {
         res.cookie('userId', doc.userId, {
           path: '/',
-          maxAge: 1000 * 60 * 60
+          maxAge: 1000 * 60 * 60 * 60
         })
         res.cookie('userName', doc.userName, {
           path: '/',
-          maxAge: 1000 * 60 * 60*60
+          maxAge: 1000 * 60 * 60 * 60
         })
         // req.session.user = doc
         res.json({
@@ -173,23 +174,23 @@ router.post('/editCheckAll', (req, res, next) => {
   })
 })
 //添加地址
-router.post("/addressList",(req,res,next)=>{
+router.post("/addressList", (req, res, next) => {
   var userId = req.cookies.userId,
-  addressList = req.body.addressList
-  User.findOne({userId:userId},(err,userDoc)=>{
-    if(userDoc){
+    addressList = req.body.addressList
+  User.findOne({ userId: userId }, (err, userDoc) => {
+    if (userDoc) {
       userDoc.addressList.push(addressList)
-      userDoc.save((err1,doc1)=>{
-        if(err1){
+      userDoc.save((err1, doc1) => {
+        if (err1) {
           res.json({
-            code:201,
-            msg:err1.message,
-            body:null
+            code: 201,
+            msg: err1.message,
+            body: null
           })
-        }else{
+        } else {
           res.json({
-            code:200,
-            msg:'添加购物车成功',
+            code: 200,
+            msg: '添加购物车成功',
             body: userDoc.addressList
           })
         }
@@ -198,84 +199,147 @@ router.post("/addressList",(req,res,next)=>{
   })
 })
 //查询用户地址接口
-router.get("/addressList",(req,res,next)=>{
+router.get("/addressList", (req, res, next) => {
   var userId = req.cookies.userId;
-  User.findOne({userId:userId},(err,doc)=>{
-    if(err){
+  User.findOne({ userId: userId }, (err, doc) => {
+    if (err) {
       res.json({
-        code:201,
-        msg:err.message,
-        body:''
+        code: 201,
+        msg: err.message,
+        body: ''
       })
-    }else{
+    } else {
       res.json({
-        code:200,
-        msg:'',
-        body:doc.addressList
+        code: 200,
+        msg: '',
+        body: doc.addressList
       })
     }
   })
 })
 
 //设为默认地址
-router.post('/setDefault',(req,res,next)=>{
+router.post('/setDefault', (req, res, next) => {
   var userId = req.cookies.userId,
-  addressId = req.body.addressId
-  User.findOne({userId:userId},(err,doc)=>{
-    if(err){
+    addressId = req.body.addressId
+  User.findOne({ userId: userId }, (err, doc) => {
+    if (err) {
       res.json({
-        code:201,
-        msg:err.message,
-        body:''
+        code: 201,
+        msg: err.message,
+        body: ''
       })
-    }else{
-      doc.addressList.forEach((item)=>{
-        if(item.addressId ==addressId){
-         item.isDefault = true
-        }else{
+    } else {
+      doc.addressList.forEach((item) => {
+        if (item.addressId == addressId) {
+          item.isDefault = true
+        } else {
           item.isDefault = false
         }
       })
-      doc.save((err2,doc2)=>{
-       if(err2){
-         res.json({
-           code:201,
-           msg:err2.message,
-           body:''
-         })
-       }else{
-         res.json({
-           code:200,
-           msg:'设置默认成功',
-           body:doc2.addressList
-         })
-       }
+      doc.save((err2, doc2) => {
+        if (err2) {
+          res.json({
+            code: 201,
+            msg: err2.message,
+            body: ''
+          })
+        } else {
+          res.json({
+            code: 200,
+            msg: '设置默认成功',
+            body: doc2.addressList
+          })
+        }
       })
     }
   })
 })
 //删除地址
-router.post('/delAddress',(req,res,next)=>{
+router.post('/delAddress', (req, res, next) => {
   var userId = req.cookies.userId,
-  addressId = req.body.addressId
-  User.update({"userId":userId},{
-    $pull:{
-      'addressList':{
-        'addressId':addressId
+    addressId = req.body.addressId
+  User.update({ "userId": userId }, {
+    $pull: {
+      'addressList': {
+        'addressId': addressId
       }
     }
-  },(err,doc)=>{
-    if(err){
+  }, (err, doc) => {
+    if (err) {
       res.json({
-        code:201,
-        msg:err.message,
-        body:''
+        code: 201,
+        msg: err.message,
+        body: ''
       })
-    }else{
+    } else {
       res.json({
-        code:200,
-        msg:'删除成功',
-        body:''
+        code: 200,
+        msg: '删除成功',
+        body: ''
+      })
+    }
+  })
+})
+
+router.post("/payMent", (req, res, next) => {
+  let userId = req.cookies.userId,
+    orderTotal = req.body.orderTotal,
+    addressId = req.body.addressId;
+  User.findOne({ userId: userId }, (err, userdoc) => {
+    if (err) {
+      res.json({
+        code: 201,
+        msg: err.message,
+        body: ""
+      })
+    } else {
+      let address = '',
+        goodsList = [];
+      //获取当前的用户地址信息
+      userdoc.addressList.forEach((item => {
+        if (addressId == item.addressId) {
+          address = item
+        }
+      }))
+      //获取用户车的购买商品
+      userdoc.cartList.filter((item) => {
+        if (item.checked == '1') {
+          goodsList.push(item)
+        }
+      })
+      let platform = '211'
+      let r1 = Math.floor(Math.random() * 10);
+      let r2 = Math.floor(Math.random() * 10);
+      let sysDate = new Date().Format('yyyyMMddhhmmss')
+      let createDate = new Date().Format('yyyy-MM-dd hh:mm:ss')
+      let orderId = platform + r1 + sysDate + r2
+      let order = {
+        orderId: orderId,
+        orderTotal: orderTotal,
+        addressInfo: address,
+        goodsList: goodsList,
+        orderStatus: '1',
+        createDate: createDate
+      }
+      userdoc.orderList.push(order)
+      userdoc.save((err2, doc2) => {
+        if (err2) {
+          res.json({
+            code: 201,
+            msg: '',
+            body: ""
+          })
+        } else {
+          res.json({
+            code: 200,
+            msg: '订单创建成功！',
+            body: {
+              orderId: order.orderId,
+              orderTotal: order.orderTotal
+            }
+          })
+        }
       })
     }
   })

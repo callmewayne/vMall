@@ -183,9 +183,9 @@ export default {
     },
     newAddress() {
       let addressObj = {
-        addressId: "100005",
-        userName: "Tronary",
-        streetName: "北京市大兴区西红门",
+        addressId: "100006",
+        userName: "Tronary1",
+        streetName: "北京市西城区菜市口",
         postCode: "1100013",
         tel: "18301152222",
         isDefault: false
