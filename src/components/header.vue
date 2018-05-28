@@ -32,7 +32,7 @@
                 <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true" v-if="!nickName">Login</a>
                 <a href="javascript:void(0)" class="navbar-link" @click="logOut" v-else>Logout</a>
                 <div class="navbar-cart-container">
-                  <span class="navbar-cart-count" v-text="cartCount" v-if="cartCount"></span>
+                  <span class="navbar-cart-count" v-text="cartCount" v-if="cartCount>0"></span>
                   <a class="navbar-link navbar-cart-link" href="/#/cart">
                     <svg class="navbar-cart-logo">
                       <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
@@ -156,7 +156,6 @@ export default {
       userPwd: "",
       errorTip: false,
       loginModalFlag: false,
-      nickName:''
     };
   },
   mounted(){
@@ -164,6 +163,14 @@ export default {
   },
   computed:{
     //  ...mapState(['nickName','cartCount'])
+    // nickName(){
+    //   return this.$store.state.nickName;
+    // },
+    // cartCount(){
+    //    return this.$store.state.cartCount;
+    // }
+    //数组结构，用vuex内部封装好的方法
+    ...mapState(['nickName','cartCount'])
   },
   methods: {
     login() {
@@ -183,7 +190,9 @@ export default {
           if (res.code === 200) {
             this.errorTip = false;
             this.loginModalFlag = false;
-            this.nickName = res.body.userName;
+            // this.nickName = res.body.userName;
+            this.getCartCount()
+            this.$store.commit('updateUserInfo',res.body.userName)
           } else {
             this.errorTip = true;
           }
@@ -194,7 +203,9 @@ export default {
         let res = Response.data;
         console.log(res)
         if (res.code == 200) {
-          this.nickName = '';
+          // this.nickName = '';
+            this.$store.commit('updateCartCount','')
+           this.$store.commit('updateUserInfo','')
           console.log(res.msg)
         }
       });
@@ -204,8 +215,19 @@ export default {
         let res = Response.data;
         console.log(res)
         if (res.code == 200) {
-          this.nickName = res.body
+         // this.nickName = res.body
+         this.getCartCount()
+          this.$store.commit('updateUserInfo',res.body)
           console.log(res.msg)
+        }
+      });
+    },
+    getCartCount(){
+       axios.get("/users/getCartCount").then(Response => {
+        let res = Response.data;
+        console.log(res)
+        if (res.code == 200) {
+           this.$store.commit('initCartCount',res.body)
         }
       });
     }

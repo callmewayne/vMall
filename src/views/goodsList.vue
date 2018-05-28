@@ -234,7 +234,7 @@ export default {
           console.log(res);
           if (res.status == 200) {
             this.mdShowCart = true;
-            // this.$store.commit("updateCartCount",1);
+             this.$store.commit("updateCartCount",1);
             console.log(res.body);
           } else {
             this.mdShow = true;

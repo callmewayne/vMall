@@ -344,4 +344,81 @@ router.post("/payMent", (req, res, next) => {
     }
   })
 })
+
+//根据订单ID查询订单信息
+router.get("/orderDetail", (req, res, next) => {
+  let userId = req.cookies.userId,
+    orderId = req.param('orderId')
+  User.findOne({ userId: userId }, (err, userDoc) => {
+    if (err) {
+      res.json({
+        code: 201,
+        msg: '',
+        body: ""
+      })
+    } else {
+
+      let orderList = userDoc.orderList
+      if (orderList.length > 0) {
+        let orderTotal = ''
+        orderList.forEach((item) => {
+          if (item.orderId == orderId) {
+            orderTotal = item.orderTotal
+          }
+        })
+        if (orderTotal) {
+          res.json({
+            code: 200,
+            msg: '',
+            body: {
+              orderId: orderId,
+              orderTotal: orderTotal
+            }
+          })
+        } else {
+          res.json({
+            code: 201,
+            msg: '当前用户无此订单',
+            body: ""
+          })
+        }
+
+      } else {
+        res.json({
+          code: 200,
+          msg: '无此订单',
+          body: ""
+        })
+      }
+
+    }
+  })
+})
+
+
+router.get("/getCartCount", (req, res, next) => {
+  if (req.cookies && req.cookies.userId) {
+    let userId = req.cookies.userId
+    User.findOne({ userId: userId }, (err, userDoc) => {
+      if (err) {
+        res.json({
+          code: 201,
+          msg: err.message,
+          body: ""
+        })
+      } else {
+        let cartList = userDoc.cartList;
+        let cartCount = 0;
+        cartList.map((item) => {
+          cartCount += parseInt(item.productNum)
+        })
+        res.json({
+          code: 200,
+          msg: '',
+          body: cartCount
+        })
+      }
+    })
+  }
+})
 module.exports = router;

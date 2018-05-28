@@ -244,6 +244,7 @@ export default {
             // });
             // console.log(ind);
             this.init();
+              this.$store.commit("updateCartCount", -item.productNum);
             this.modalConfirm = false;
           }
         });
