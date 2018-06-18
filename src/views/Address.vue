@@ -183,12 +183,12 @@ export default {
     },
     newAddress() {
       let addressObj = {
-        addressId: "100001",
+        addressId: "1000012",
         userName: "wayne",
-        streetName: "北京市海淀区中关村",
+        streetName: "北京市朝阳区望京SOHO",
         postCode: "1100013",
-        tel: "18301152222",
-        isDefault: true
+        tel: "18301152223",
+        isDefault: false
       };
       axios
         .post("/users/addressList", {
